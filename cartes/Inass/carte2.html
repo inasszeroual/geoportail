@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+	<title>Carte Choroplèthe</title>
+	<link rel="stylesheet" href="leaflet.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<script src="leaflet.js"></script>
+
+
+	<style>
+		body {
+  background: #aad3df;
+  background: -webkit-linear-gradient(to left, #7A90F0, #BC68F3);
+  background: linear-gradient(to left, #7A90F0, #BC68F3);
+  min-height: 100vh;
+}
+
+		#map {
+			width: 600px;
+			height: 600px;
+		}
+
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255, 255, 255, 0.8);
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+			border-radius: 5px;
+		}
+
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+
+		.legend {
+			line-height: 18px;
+			color: #555;
+		}
+
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+	</style>
+
+
+</head>
+
+<body>
+	<h6 class="text-center text-white display-1" style="font-size: 20px;font-weight: bold; padding:14px;" id="Title">
+		Formation en Sciences Géomatiques et Ingénierie Topographique
+	</h6>
+	<h2 class="text-center text-white display-4" id="Title">
+		Carte choroplèthe de l aridité entre les années 1991 et 2015 au niveau des régions du Maroc
+	</h2>
+
+	<div class="card w-75 align-self-center mb-4">
+		<div class="card-body">
+			<p id="Sub">
+				L’aridité est un phénomène climatique impliquant une pluviométrie faible. Dans les régions dites arides ou sèches,
+				les précipitations sont inférieures à l'évapotranspiration potentielle (notée ETP).
+			</p>
+			<p>
+				Les terres arides et semi-arides (précipitations inférieures à 600 mm par an) représentent deux tiers du territoire marocain.
+				A l’échelle mondiale, le Fonds International de Développement Agricole (FIDA) indique que ces zones sèches couvrent 40% des terres.
+				L’Alliance vise à trouver des solutions durables pour l’exploitation agricole mais aussi le maintient de la biodiversité et la lutte contre la désertification de ces zones.
+			</p>
+			<p>
+				La carte ci-dessous représente la répartion des trois régimes d aridité au niveau des régions du Maroc :
+			</p>
+			<div id='map' class="w-100"></div>
+		</div>
+	</div>
+
+	<footer class="text-center text-white p-4">
+		<p class="mb-0 font-weight-bolder">Travail réalisé par ABDELATI Chayma et ZEROUAL Inass, encardé par Pr.HAJJI </p>
+	</footer>
+
+
+	<script type="text/javascript" src="RGmaroc.js"></script>
+	<script type="text/javascript">
+
+		var map = L.map('map').setView([33.958667, -6.895028], 4.50);
+
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+
+		// get color depending on population density value
+		function getColor(d) {
+			return d == "Semi aride" ? '#DBBFF2' :
+				d == "aride" ? '#8A13EC' :
+					'#2F084F';
+		}
+
+		function Monstyle(feature) {
+			return {
+				weight: 2,
+				opacity: 1,
+				color: 'white',
+				dashArray: '3',
+				fillOpacity: 0.7,
+				fillColor: getColor(feature.properties.Ar91_15)
+			};
+		}
+
+		function highlightFeature(e) {
+			var layer = e.target;
+
+			layer.setStyle({
+				weight: 5,
+				color: '#828282',
+				dashArray: '',
+				fillOpacity: 0.7
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+				layer.bringToFront();
+			}
+			info.update(layer.feature.properties);
+
+		}
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+
+		}
+		function zoomToFeature(e) {
+			map.fitBounds(e.target.getBounds());
+		}
+		function onEachFeature(feature, layer) {
+			layer.on({
+				mouseover: highlightFeature,
+				mouseout: resetHighlight,
+				click: zoomToFeature
+			});
+		}
+		var info = L.control();
+
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+			this.update();
+			return this._div;
+		};
+
+		// method that we will use to update the control based on feature properties passed
+		info.update = function (props) {
+			this._div.innerHTML = '<h4>Carte choroplèthe de l aridité entre les années 1991-2015 au niveau des régions du Maroc :</h4>' + (props ?
+				'La région : <b>' + props.Nom_Region + '</b> <br />La population : ' + props.Population + '</b> <br />L aridité : ' + props.Ar91_15 +  ' </sup>'
+				: 'Merci de déplacer le cursuer vers la région que vous souhaitez');
+		};
+
+		info.addTo(map);
+
+		var geojson = L.geoJson(Regionmaroc, {
+			style: Monstyle,
+			onEachFeature: onEachFeature,
+		}).addTo(map);
+
+
+
+        // var overlayMaps = {
+        //     "geojson": geojson,
+        //  };
+
+        // //var control = L.control.layers(baseMaps, overlayMaps)
+        // var control = L.control.selectLayers(  overlayMaps)
+        // control.addTo(map);
+
+
+	</script>
+	<script src="assets/js/JQuery.js"></script>
+	<script src="assets/js/popper.js"></script>
+	<script src="assets/js/bootstrap.js"></script>
+
+</body>
+
+</html>

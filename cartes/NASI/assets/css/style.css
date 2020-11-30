@@ -1,0 +1,43 @@
+body {
+  background: #aad3df;
+  background: -webkit-linear-gradient(to left, #aad3df, #397c91);
+  background: linear-gradient(to left, #aad3df, #397c91);
+  min-height: 100vh;
+}
+
+.card {
+  margin: 0 auto;
+  box-shadow: 0 0 10px #28244d7c;
+}
+.card p {
+  font-weight: 500;
+}
+
+#Title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+  padding: 30px;
+  background-color: #00000009;
+  box-shadow: 0 0 10px #28244d7c;
+  margin-bottom: 20px;
+}
+
+footer {
+  background-color: #00000009;
+  box-shadow: 0 0 10px #28244d7c;
+}
+
+#map {
+  box-shadow: 0 0 5px #1b173d7c;
+  border-radius: 6px;
+}
+#map:hover {
+  box-shadow: 0 0 5px #1b173dd2;
+  transition: 0.3s all ease-in-out;
+}
+
+#map:not(hover) {
+  transition: 0.3s all ease-in-out;
+
+}

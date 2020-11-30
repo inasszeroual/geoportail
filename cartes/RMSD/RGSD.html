@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Symboles proportionels</title>
+  <link rel="stylesheet" href="leaflet.css">
+  <link rel="stylesheet" href="assets/css/bootstrap.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="leaflet.js"></script>
+
+    <h3 style="background-color:rgba(30, 143, 255, 0.411);color:rgb(52, 78, 224);text-align:right;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">  </3>
+    <h2 style="color:rgb(28, 28, 189);text-align:center;font-family:verdana"></h2>
+    <h2 style="color:turquoise;text-align:center;font-family:'Courier New'"></h2>
+
+
+
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+
+
+    <style>
+        body {
+          background-image: url('back3.jpg');
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-size: 100% 100%;
+        }
+        </style>
+      <style>
+    body {
+  background: #aad3df;
+  background: -webkit-linear-gradient(to left, #3357CB, #88CBDD);
+  background: linear-gradient(to left, #3357CB, #88CBDD);
+  min-height: 100vh;
+}
+
+    #map {
+      width: 600px;
+      height: 600px;
+    }
+
+    .info {
+      padding: 6px 8px;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+
+    .info h4 {
+      margin: 0 0 5px;
+      color: #777;
+    }
+
+    .legend {
+      line-height: 18px;
+      color: #555;
+    }
+
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 0.7;
+    }
+  </style>
+
+</head>
+<body>
+
+<h6 class="text-center text-white display-1" style="font-size: 20px;font-weight: bold; padding:14px;" id="Title">
+    Formation en Sciences Géomatiques et Ingénierie Topographique
+  </h6>
+  <h2 class="text-center text-white display-4" id="Title">
+    Carte de la déforestation en symboles proportionnels au niveau des régions marocaines en 2017
+  </h2>
+
+  <div class="card w-75 align-self-center mb-4">
+    <div class="card-body">
+      <p id="Sub">
+       La déforestation est le phénomène de régression durable des surfaces couvertes de forêts, qu'il soit d'origine anthropique ou naturelle.
+       Si une forêt repousse après une coupe, une attaque d'insectes xylophage ou un feu, on ne parle pas de déforestation.
+      </p>
+      <p>
+       Le phénomène de déforestation est souvent évoqué en lien avec celui de dégradation (fonctionnelle ou biologique) de la forêt.
+       La perte de couvert forestier fait référence à la perte de surface forestière brute, elle est souvent observée par satellite.
+      </p>
+      <p>
+        La carte ci-desoous représente la déforestation au niveau des régions marocaines en 2017 :
+      </p>
+      <div id='map' class="w-100"></div>
+    </div>
+  </div>
+
+  <footer class="text-center text-white p-4">
+    <p class="mb-0 font-weight-bolder">Travail réalisé par ABDELATI Chayma et ZEROUAL Inass, encardé par Pr.HAJJI </p>
+  </footer>
+
+<script src = 'regionmaroc.js' ></script>
+<script src='centroiides.js'></script>
+<script type="text/javascript">
+
+
+
+
+
+
+
+
+var map = L.map('map').setView([28.240841, 9.850412], 4);
+    var test1= L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    id: 'mapbox.light'
+  }).addTo(map);
+
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+
+    //var na = L.geoJson(mynadata, {style : Monstyle2,
+      //onEachFeature: onEachFeature,
+    //}).addTo(map);
+  // reset the style
+  //function resetHighlight(e) {
+      //na.resetStyle(e.target);
+  //}
+
+    function getRadius(area) {
+      var radius = Math.sqrt(area)*(20/Math.sqrt(100000));
+      return radius*4;
+    };
+
+   var def90_00 = L.geoJson(centres, {style: Monstyle,
+            pointToLayer: function(feature, latlng) {
+              return L.circleMarker(latlng, {
+                        color: '#b2e835',
+                        opacity: 0.5,
+                        weight: 2,
+                        fillColor: '#b2e835',
+                        fillOpacity: 0.3,
+                        radius: getRadius(feature.properties._Def_2017)
+                  });
+            },
+            onEachFeature: function (feature, layer) {
+              var popup =
+                  '<p>La région : <b> ' + layer.feature.properties.Nom_Region + '</b></p>' +
+                  '<p>La population :' + layer.feature.properties._Def_2017 + '</p>'
+                    layer.on('mouseover', function () {
+                      layer.bindPopup(popup).openPopup();
+                      layer.setStyle({
+                      fillColor: '#e264ed',
+                      fillOpacity: 1
+          });
+        });
+
+                    layer.on('mouseout', function () {
+                      layer.setStyle({
+                      fillColor: '#4fe882',
+                      fillOpacity: 0.3
+          });
+          layer.bindPopup(popup).closePopup();
+        })
+
+      }
+        }).addTo(map);
+    // zoom to feature(pays)
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+    // style changed with mouseover
+
+
+    function Monstyle(feature) {
+    return {
+      weight: 3,
+      opacity: 1,
+      color: '#b2e835',
+      dashArray: '3',
+      fillOpacity: 0.7,
+      fillColor: "#b2e835"
+    };
+  }
+
+
+
+  //function Monstyle2(feature) {
+    //return {
+      //weight: 1,
+      //opacity: 0,
+      //color: '#f7ff99',
+      //dashArray: '3',
+      //fillOpacity: 0,
+      //fillColor: "#f7ff99"
+    //};
+  //}
+    // getColor template
+    //function getColor(d) {
+        //return  d == "Maroc" ? '#fc9272' :
+            //d == "Libya" ? '#fc9272' :
+            //d == "Tunisia"  ? '#fc9272' :
+            //d == "Algeria"   ? '#fc9272' :
+            //d == "Egypt"   ? '#fc9272' :
+            //'#fc9272';
+   //}
+
+    //legend
+    //var legend = L.control({position: 'bottomright'});
+
+      //legend.onAdd = function (map) {
+
+        //var div = L.DomUtil.create('div', 'info legend'),
+          //grades = ["MAROC", "Algeria", "Tunisie", "Libye", "Egypte"],
+          //labels = [],
+          //from, to;
+          //div.innerHTML = '<div><h3 style="font-weight:bolder;font-size:larger;">les pays NA</h3>'
+
+        //for (var i = 0; i < grades.length; i++) {
+          //from = grades[i];
+          //to = grades[i + 1];
+
+         //labels.push(
+            //'<i style="background:' + getColor(to) + '"></i> ' +
+            //from + (to ? '&ndash;' + to : '+'));
+        //}
+
+        //div.innerHTML += '<ul style="list-style-type:none;display:inline-block;padding:0;width:250px">' + labels.join('</br>') + '</ul>';
+         //div;
+      //};
+
+
+      //legend.addTo(map);
+
+
+
+
+
+
+</script>
+ <script src="assets/js/JQuery.js"></script>
+  <script src="assets/js/popper.js"></script>
+  <script src="assets/js/bootstrap.js"></script>
+</body>
+</html>
